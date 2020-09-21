@@ -147,9 +147,8 @@ var TextLayerItemInternal = /*#__PURE__*/function (_PureComponent) {
 
                 element.style.transform = transform;
                 element.style.WebkitTransform = transform;
-                console.log(targetWidth, actualWidth, this.getElementWidth(element), this.props.str);
 
-              case 19:
+              case 18:
               case "end":
                 return _context2.stop();
             }
