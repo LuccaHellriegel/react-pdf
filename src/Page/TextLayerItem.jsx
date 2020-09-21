@@ -6,6 +6,10 @@ import PageContext from "../PageContext";
 import { isPage, isRotate } from "../shared/propTypes";
 
 export class TextLayerItemInternal extends PureComponent {
+	componentDidMount() {
+		this.alignTextItem();
+	}
+
 	get unrotatedViewport() {
 		const { page, scale } = this.props;
 
@@ -53,6 +57,55 @@ export class TextLayerItemInternal extends PureComponent {
 		const [xMin] = viewport.viewBox;
 		return defaultSideways ? y - xMin : x - xMin;
 	}
+
+	async getFontData(fontName) {
+		const { page } = this.props;
+
+		const font = await new Promise((resolve) => {
+			page.commonObjs.get(fontName, resolve);
+		});
+
+		return font;
+	}
+
+	async alignTextItem() {
+		const element = this.item;
+
+		if (!element) {
+			return;
+		}
+
+		element.style.transform = "";
+
+		const { fontName, scale, width } = this.props;
+
+		element.style.fontFamily = `${fontName}, sans-serif`;
+
+		const fontData = await this.getFontData(fontName);
+
+		const fallbackFontName = fontData ? fontData.fallbackName : "sans-serif";
+		element.style.fontFamily = `${fontName}, ${fallbackFontName}`;
+
+		const targetWidth = width * scale;
+		const actualWidth = this.getElementWidth(element);
+
+		let transform = `scaleX(${targetWidth / actualWidth})`;
+
+		const ascent = fontData ? fontData.ascent : 0;
+		if (ascent) {
+			transform += ` translateY(${(1 - ascent) * 100}%)`;
+		}
+
+		element.style.transform = transform;
+		element.style.WebkitTransform = transform;
+
+		console.log(targetWidth, actualWidth, this.getElementWidth(element), this.props.str);
+	}
+
+	getElementWidth = (element) => {
+		const { sideways } = this;
+		return element.getBoundingClientRect()[sideways ? "height" : "width"];
+	};
 
 	render() {
 		const { fontSize, top, left } = this;

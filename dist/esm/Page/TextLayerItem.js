@@ -1,10 +1,14 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _slicedToArray from "@babel/runtime/helpers/esm/slicedToArray";
+import _regeneratorRuntime from "@babel/runtime/regenerator";
+import _asyncToGenerator from "@babel/runtime/helpers/esm/asyncToGenerator";
 import _classCallCheck from "@babel/runtime/helpers/esm/classCallCheck";
 import _createClass from "@babel/runtime/helpers/esm/createClass";
+import _assertThisInitialized from "@babel/runtime/helpers/esm/assertThisInitialized";
 import _inherits from "@babel/runtime/helpers/esm/inherits";
 import _possibleConstructorReturn from "@babel/runtime/helpers/esm/possibleConstructorReturn";
 import _getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
+import _defineProperty from "@babel/runtime/helpers/esm/defineProperty";
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
@@ -20,26 +24,136 @@ export var TextLayerItemInternal = /*#__PURE__*/function (_PureComponent) {
   var _super = _createSuper(TextLayerItemInternal);
 
   function TextLayerItemInternal() {
+    var _this;
+
     _classCallCheck(this, TextLayerItemInternal);
 
-    return _super.apply(this, arguments);
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "getElementWidth", function (element) {
+      var _assertThisInitialize = _assertThisInitialized(_this),
+          sideways = _assertThisInitialize.sideways;
+
+      return element.getBoundingClientRect()[sideways ? "height" : "width"];
+    });
+
+    return _this;
   }
 
   _createClass(TextLayerItemInternal, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.alignTextItem();
+    }
+  }, {
+    key: "getFontData",
+    value: function () {
+      var _getFontData = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(fontName) {
+        var page, font;
+        return _regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                page = this.props.page;
+                _context.next = 3;
+                return new Promise(function (resolve) {
+                  page.commonObjs.get(fontName, resolve);
+                });
+
+              case 3:
+                font = _context.sent;
+                return _context.abrupt("return", font);
+
+              case 5:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getFontData(_x) {
+        return _getFontData.apply(this, arguments);
+      }
+
+      return getFontData;
+    }()
+  }, {
+    key: "alignTextItem",
+    value: function () {
+      var _alignTextItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2() {
+        var element, _this$props, fontName, scale, width, fontData, fallbackFontName, targetWidth, actualWidth, transform, ascent;
+
+        return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                element = this.item;
+
+                if (element) {
+                  _context2.next = 3;
+                  break;
+                }
+
+                return _context2.abrupt("return");
+
+              case 3:
+                element.style.transform = "";
+                _this$props = this.props, fontName = _this$props.fontName, scale = _this$props.scale, width = _this$props.width;
+                element.style.fontFamily = "".concat(fontName, ", sans-serif");
+                _context2.next = 8;
+                return this.getFontData(fontName);
+
+              case 8:
+                fontData = _context2.sent;
+                fallbackFontName = fontData ? fontData.fallbackName : "sans-serif";
+                element.style.fontFamily = "".concat(fontName, ", ").concat(fallbackFontName);
+                targetWidth = width * scale;
+                actualWidth = this.getElementWidth(element);
+                transform = "scaleX(".concat(targetWidth / actualWidth, ")");
+                ascent = fontData ? fontData.ascent : 0;
+
+                if (ascent) {
+                  transform += " translateY(".concat((1 - ascent) * 100, "%)");
+                }
+
+                element.style.transform = transform;
+                element.style.WebkitTransform = transform;
+                console.log(targetWidth, actualWidth, this.getElementWidth(element), this.props.str);
+
+              case 19:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function alignTextItem() {
+        return _alignTextItem.apply(this, arguments);
+      }
+
+      return alignTextItem;
+    }()
+  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
 
       var fontSize = this.fontSize,
           top = this.top,
           left = this.left;
-      var _this$props = this.props,
-          customTextRenderer = _this$props.customTextRenderer,
-          scale = _this$props.scale,
-          text = _this$props.str;
+      var _this$props2 = this.props,
+          customTextRenderer = _this$props2.customTextRenderer,
+          scale = _this$props2.scale,
+          text = _this$props2.str;
       return /*#__PURE__*/React.createElement("span", {
         ref: function ref(_ref) {
-          _this.item = _ref;
+          _this2.item = _ref;
         },
         style: {
           height: "1em",
@@ -57,9 +171,9 @@ export var TextLayerItemInternal = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "unrotatedViewport",
     get: function get() {
-      var _this$props2 = this.props,
-          page = _this$props2.page,
-          scale = _this$props2.scale;
+      var _this$props3 = this.props,
+          page = _this$props3.page,
+          scale = _this$props3.scale;
       return page.getViewport({
         scale: scale
       });
@@ -72,9 +186,9 @@ export var TextLayerItemInternal = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "rotate",
     get: function get() {
-      var _this$props3 = this.props,
-          page = _this$props3.page,
-          rotate = _this$props3.rotate;
+      var _this$props4 = this.props,
+          page = _this$props4.page,
+          rotate = _this$props4.rotate;
       return rotate - page.rotate;
     }
   }, {
