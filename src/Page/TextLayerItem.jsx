@@ -98,8 +98,6 @@ export class TextLayerItemInternal extends PureComponent {
 
 		element.style.transform = transform;
 		element.style.WebkitTransform = transform;
-
-		console.log(targetWidth, actualWidth, this.getElementWidth(element), this.props.str);
 	}
 
 	getElementWidth = (element) => {
